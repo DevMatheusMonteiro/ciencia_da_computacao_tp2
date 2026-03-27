@@ -11,12 +11,22 @@ async def handle_client(reader, writer):
     request_text = request.decode()
     print(f"[{addr}] {request_text.splitlines()[0]}")
 
+    body = """\
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Servidor asyncio</title></head>
+<body>
+<h1>Olá, você se conectou ao servidor asyncio!</h1>
+</body>
+</html>
+"""
     response = (
         "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
+        "Content-Type: text/html; charset=utf-8\r\n"
         "Connection: close\r\n"
+        f"Content-Length: {len(body.encode())}\r\n"
         "\r\n"
-        "Olá, você se conectou ao servidor asyncio!\n"
+        + body
     )
     writer.write(response.encode())
     await writer.drain()
@@ -32,8 +42,7 @@ async def main():
     async with server:
         await server.serve_forever()
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("Servidor finalizado manualmente.")
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    print("Servidor finalizado manualmente.")

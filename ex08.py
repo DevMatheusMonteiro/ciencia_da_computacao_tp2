@@ -1,10 +1,7 @@
 import random
 import time
 
-
-# ── QuickSort simples (pivô = último elemento) ──────────────────────────────
-
-def partition_simple(arr, left, right):
+def partition(arr, left, right):
     pivot = arr[right]
     i = left - 1
     for j in range(left, right):
@@ -14,15 +11,11 @@ def partition_simple(arr, left, right):
     arr[i + 1], arr[right] = arr[right], arr[i + 1]
     return i + 1
 
-
 def quicksort_simple(arr, left, right):
     if left < right:
-        pi = partition_simple(arr, left, right)
+        pi = partition(arr, left, right)
         quicksort_simple(arr, left, pi - 1)
         quicksort_simple(arr, pi + 1, right)
-
-
-# ── QuickSort com mediana de três ───────────────────────────────────────────
 
 def median_of_three(arr, left, right):
     mid = (left + right) // 2
@@ -36,7 +29,6 @@ def median_of_three(arr, left, right):
     # arr[mid] é a mediana; coloca no penúltimo para não atrapalhar a partição
     arr[mid], arr[right - 1] = arr[right - 1], arr[mid]
     return arr[right - 1]
-
 
 def partition_median(arr, left, right):
     if right - left < 2:
@@ -62,7 +54,6 @@ def partition_median(arr, left, right):
     arr[i], arr[right - 1] = arr[right - 1], arr[i]
     return i
 
-
 def quicksort_median(arr, left, right):
     if right - left < 2:
         if left < right and arr[left] > arr[right]:
@@ -71,9 +62,6 @@ def quicksort_median(arr, left, right):
     pi = partition_median(arr, left, right)
     quicksort_median(arr, left, pi - 1)
     quicksort_median(arr, pi + 1, right)
-
-
-# ── Utilitários ─────────────────────────────────────────────────────────────
 
 def sort_and_time(sort_fn, arr):
     data = arr[:]
@@ -96,29 +84,22 @@ def benchmark(label, arr):
     else:
         print(f"  Simples foi {-ganho:.1f}% mais rapido")
 
+N = 3000
 
-# ── Cenários de teste ────────────────────────────────────────────────────────
+aleatorio      = random.sample(range(N * 10), N)
+ordenado       = list(range(N))
+invertido      = list(range(N, 0, -1))
+quase_ordenado = list(range(N))
+for _ in range(N // 20):        # 5 % das posições trocadas
+    i, j = random.randrange(N), random.randrange(N)
+    quase_ordenado[i], quase_ordenado[j] = quase_ordenado[j], quase_ordenado[i]
 
-if __name__ == "__main__":
-    import sys
-    sys.setrecursionlimit(10000)
+benchmark("Vetor aleatório",       aleatorio)
+benchmark("Vetor ordenado",        ordenado)
+benchmark("Vetor invertido",       invertido)
+benchmark("Vetor quase ordenado",  quase_ordenado)
 
-    N = 3000
-
-    aleatorio      = random.sample(range(N * 10), N)
-    ordenado       = list(range(N))
-    invertido      = list(range(N, 0, -1))
-    quase_ordenado = list(range(N))
-    for _ in range(N // 20):        # 5 % das posições trocadas
-        i, j = random.randrange(N), random.randrange(N)
-        quase_ordenado[i], quase_ordenado[j] = quase_ordenado[j], quase_ordenado[i]
-
-    benchmark("Vetor aleatório",       aleatorio)
-    benchmark("Vetor ordenado",        ordenado)
-    benchmark("Vetor invertido",       invertido)
-    benchmark("Vetor quase ordenado",  quase_ordenado)
-
-    print("""
+print("""
 === Análise ===
 Vetor aleatório:
   Ambas as versões têm desempenho similar (O(n log n) médio).
